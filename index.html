@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Busca de Emprego</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <script type="text/javascript" src="script.js"></script>
+</head>
+<body>
+    <h1>Busca de Emprego na Área de Tecnologia</h1>
+    <form onsubmit="return searchJobPostings()">
+        <label for="keyword">Palavra-Chave:</label>
+        <input type="text" id="keyword" name="keyword"><br>
+        <label for="location">Localização:</label>
+        <input type="text" id="location" name="location"><br>
+        <input type="submit" value="Pesquisar">
+    </form>
+
+    <div id="job-postings"></div>
+
+    <?php
+        require_once "job_posting.php";
+
+        $jobPostingDatabase = new JobPostingDatabase();
+        $requiredSkills1 = array("Java", "Spring Framework");
+        $jobPosting1 = new JobPosting("Desenvolvedor Java", "Descrição da vaga para desenvolvedor Java", "Empresa A", "São Paulo", $requiredSkills1);
+        $jobPostingDatabase->addJobPosting($jobPosting1);
+        $requiredSkills2 = array("JavaScript", "React");
+        $jobPosting2 = new JobPosting("Desenvolvedor Front-end", "Descrição da vaga para desenvolvedor Front-end", "Empresa B", "Rio de Janeiro", $requiredSkills2);
+        $jobPostingDatabase->addJobPosting($jobPosting2);
+
+        if (isset($_GET['keyword']) && isset($_GET['location'])) {
+            $jobPostingSearchEngine = new JobPostingSearchEngine();
+            $matchingJobPostings = $jobPostingSearchEngine->searchJobPostings($jobPostingDatabase, $_GET['keyword'], $_GET['location']);
+
+            echo "<ul>";
+
+            foreach ($matchingJobPostings as $jobPosting) {
+                echo "<li>" . $jobPosting->getTitle() . " - " . $jobPosting->getDescription() . "</li>";
+            }
+
+            echo "</ul>";
+        }
+    ?>
+</body>
+</html>
